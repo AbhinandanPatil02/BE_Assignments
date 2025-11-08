@@ -2,32 +2,27 @@
 using namespace std;
 
 
-bool isSafe(int row,int col,vector<string>&board,int n){
-    
-    // check row
-    for(int i=0;i<n;i++){
-        if(i!=col&&board[row][i]=='Q')return false;
+bool issafe(int col,int row,vector<string>&board,int n){
+    for(int r=0;r<n;r++){
+        if(r!=row&&board[r][col]=='Q')return false;
+    }
+    for(int c=0;c<n;c++){
+        if(c!=col&&board[row][c]=='Q')return false;
     }
 
-    // check col
-    for(int i=0;i<n;i++){
-        if(i!=row&&board[i][col]=='Q')return false;
-    }
-
-    // check diagonals
-    int r=row-1,c=col-1;
-    while(r>=0&&c>=0){
-        if(board[r][c]=='Q')return false;
-        r--;
-        c--;
-    }
-
-    r=row+1;
-    c=col+1;
+    int r=row+1,c=col+1;
     while(r<n&&c<n){
         if(board[r][c]=='Q')return false;
         r++;
         c++;
+    }
+
+    r=row-1;
+    c=col-1;
+    while(r>=0&&c>=0){
+        if(board[r][c]=='Q')return false;
+        r--;
+        c--;
     }
 
     r=row+1;
@@ -37,31 +32,27 @@ bool isSafe(int row,int col,vector<string>&board,int n){
         r++;
         c--;
     }
-
+    
     r=row-1;
     c=col+1;
     while(r>=0&&c<n){
         if(board[r][c]=='Q')return false;
-        c++;
         r--;
+        c++;
     }
-
     return true;
 }
 
 
 
-
-void solve(int col,vector<vector<string>>&ans, vector<string>&board,int n){
+void solve(int col,vector<vector<string>>&ans,vector<string>&board,int n){
     if(col==n){
         ans.push_back(board);
         return;
     }
-
-    // check if already has queen placed by user
-    bool f=0;
-    for(int r=0;r<n;r++){
-        if(board[r][col]=='Q'){
+    int f=0;
+    for(int row=0;row<n;row++){
+        if(board[row][col]=='Q'){
             f=1;
             break;
         }
@@ -71,20 +62,18 @@ void solve(int col,vector<vector<string>>&ans, vector<string>&board,int n){
         return;
     }
 
-
-    // main logic
     for(int row=0;row<n;row++){
-        if(isSafe(row,col,board,n)){
+        if(issafe(col,row,board,n)){
             board[row][col]='Q';
             solve(col+1,ans,board,n);
-            board[row][col]='.'; // backtrack
+            board[row][col]='.';
         }
     }
-
 }
 
 
 int main(){
+
     int n;
     cout<<"Enter n : ";
     cin>>n;
@@ -92,39 +81,40 @@ int main(){
     vector<string>board(n);
     string s(n,'.');
     for(int i=0;i<n;i++)board[i]=s;
+    cout<<"Enter row and col for 1st Q : ";
     int r,c;
-    cout<<"Enter row : ";
-    cin>>r;
-    cout<<"Enter col : ";
-    cin>>c;
-
-    if(!isSafe(r,c,board,n)){
-        cout<<"Invalid position"<<endl;
-        return 0;
-    }
-
-    board[r][c]='Q';
-    solve(0,ans,board,n);
-    if(ans.size()==0){
-        cout<<"No valid combination found"<<endl;
-        return 0;
-    }
-
-    for(int i=0;i<ans.size();i++){
-        for(int j=0;j<n;j++){
-            for(int k=0;k<n;k++){
-                if(ans[i][j][k]=='Q'){
-                    cout<<"Q"<<" ";
-                }
-                else{
-                    cout<<"_"<<" ";
-                }
-            }
-            cout<<endl;
-
+    cin>>r>>c;
+    if(r>=0&&r<n&&c>=0&&c<n){
+        board[r][c]='Q';
+        solve(0,ans,board,n);
+        if(ans.size()==0){
+            cout<<"No combinations present "<<endl;
+            return 0;
         }
-        cout<<"----------------------------------"<<endl;
+
+        for(int i=0;i<ans.size();i++){
+            for(int j=0;j<n;j++){
+                for(int k=0;k<n;k++){
+                    if(ans[i][j][k]=='Q'){
+                        cout<<"Q"<<" ";
+                    }
+                    else{
+                        cout<<"_"<<" ";
+                    }
+                }
+                cout<<endl;
+            }
+            cout<<"\n\n";
+            cout<<"---------------------------------"<<endl;
+        }
+
+
     }
+    else{
+        cout<<"Invalid index !!!!!! "<<endl;
+    }
+
+    
 
     return 0;
 }
