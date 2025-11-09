@@ -94,8 +94,8 @@ class haffman{
             }
         }
         return ans;
-
     }
+    
 
     void printcodes(){
         for(auto  it :haffman_codes){
