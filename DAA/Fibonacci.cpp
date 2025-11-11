@@ -13,7 +13,6 @@ void print_re_fibo(int n){
     }
 }
 
-
 void fibo_itr(int n){
     if(n<0)return;
     if(n==0){
@@ -47,3 +46,6 @@ int main(){
     
     return 0;
 }
+
+
+
