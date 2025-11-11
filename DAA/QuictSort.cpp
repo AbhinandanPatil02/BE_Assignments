@@ -1,97 +1,108 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// Normal partition
-int partition(int l,int h,vector<int>&v,int &sw,int &comp){
-    int p = v[l];
-    int i = l + 1;
-    int j = h;
-    while(true){
-        while(i <= j && v[i] <= p){
+
+int q_partition(int l,int h,vector<int>&v,int &sw1,int &comp1){
+    int piv=l;
+    int i=l+1;
+    int j=h;
+    while(i<=j){
+        while(i<=j&&v[piv]>v[i]){
+            comp1++;
             i++;
-            comp++; // comparison
         }
-        comp++; // for the failed condition
-        while(i <= j && v[j] > p){
+        while(i<=j&&v[piv]<v[j]){
+            comp1++;
             j--;
-            comp++; // comparison
         }
-        comp++; // for the failed condition
-        if(i >= j) break;
-        swap(v[i], v[j]);
-        sw++; // swap count
+        if(i<j){
+            sw1++;
+            swap(v[i],v[j]);
+        }
     }
-    swap(v[l], v[j]);
-    sw++;
+    swap(v[piv],v[j]);
+    sw1++;
     return j;
 }
 
-void qsort(vector<int>&v,int l,int r,int &sw,int &comp){
-    if(l < r){
-        int p = partition(l, r, v, sw, comp);
-        qsort(v, l, p - 1, sw, comp);
-        qsort(v, p + 1, r, sw, comp);
+
+void qsort(int l,int h,vector<int>&v,int &sw1,int &comp1){
+    if(l<h){
+        int p=q_partition(l,h,v,sw1,comp1);
+        qsort(l,p-1,v,sw1,comp1);
+        qsort(p+1,h,v,sw1,comp1);
     }
 }
 
-// Randomized partition
-int r_partition(int l,int h,vector<int>&v,int &sw,int &comp){
-    int p_idx = l + rand() % (h - l + 1);
-    swap(v[l], v[p_idx]);
-    sw++;
-    int p = v[l];
-    int i = l + 1;
-    int j = h;
-    while(true){
-        while(i <= j && v[i] <= p){
+void solve(vector<int>&v,int &sw1,int &comp1){
+    int l=0;
+    int h=v.size()-1;
+    qsort(l,h,v,sw1,comp1);
+}
+
+
+// Randomized 
+int q_partition_r(int l,int h,vector<int>&v,int &sw2,int &comp2){
+    int piv_idx=l+rand()%(h-l+1);
+    swap(v[piv_idx],v[l]);
+    int piv=l;
+    int i=l+1;
+    int j=h;
+    while(i<=j){
+        while(i<=j&&v[piv]>v[i]){
+            comp2++;
             i++;
-            comp++;
         }
-        comp++;
-        while(i <= j && v[j] > p){
+        while(i<=j&&v[piv]<v[j]){
+            comp2++;
             j--;
-            comp++;
         }
-        comp++;
-        if(i >= j) break;
-        swap(v[i], v[j]);
-        sw++;
+        if(i<j){
+            sw2++;
+            swap(v[i],v[j]);
+        }
     }
-    swap(v[l], v[j]);
-    sw++;
+    swap(v[piv],v[j]);
+    sw2++;
     return j;
 }
 
-void r_qsort(vector<int>&v,int l,int r,int &sw,int &comp){
-    if(l < r){
-        int p = r_partition(l, r, v, sw, comp);
-        r_qsort(v, l, p - 1, sw, comp);
-        r_qsort(v, p + 1, r, sw, comp);
+
+void qsort_r(int l,int h,vector<int>&v,int &sw2,int &comp2){
+    if(l<h){
+        int p=q_partition_r(l,h,v,sw2,comp2);
+        qsort_r(l,p-1,v,sw2,comp2);
+        qsort_r(p+1,h,v,sw2,comp2);
     }
 }
+
+void solve_r(vector<int>&v,int &sw2,int &comp2){
+    int l=0;
+    int h=v.size()-1;
+    qsort_r(l,h,v,sw2,comp2);
+}
+
+
 
 int main(){
     srand(time(0));
+    vector<int>v={7,6,5,4,3,2,1};
+    int sw1=0,comp1=0;
+    int sw2=0,comp2=0;
+    vector<int>v2=v;
+    solve(v,sw1,comp1);
+    cout<<"Comp1 : "<<comp1<<" sw1 : "<<sw1<<endl;
+    for(auto i:v){
+        cout<<i<<" ";
+    }
+    cout<<endl;
+    solve_r(v2,sw2,comp2);
+    cout<<"Comp2 : "<<comp2<<" sw2 : "<<sw2<<endl;
 
-    vector<int> v1 = {10,6,4,3,2,1};
-    vector<int> v2 = v1;
-
-    int sw1 = 0, comp1 = 0;
-    int sw2 = 0, comp2 = 0;
-
-    // Normal QuickSort
-    qsort(v1, 0, v1.size() - 1, sw1, comp1);
-
-    // Randomized QuickSort
-    r_qsort(v2, 0, v2.size() - 1, sw2, comp2);
-
-    cout << "Sorted (Normal): ";
-    for(auto i : v1) cout << i << " ";
-    cout << "\nSwaps: " << sw1 << "  Comparisons: " << comp1 << "\n\n";
-
-    cout << "Sorted (Randomized): ";
-    for(auto i : v2) cout << i << " ";
-    cout << "\nSwaps: " << sw2 << "  Comparisons: " << comp2 << "\n";
-
+    for(auto i:v2){
+        cout<<i<<" ";
+    }
+    cout<<endl;
+    
     return 0;
 }

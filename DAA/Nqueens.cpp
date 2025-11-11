@@ -50,6 +50,7 @@ void solve(int col,vector<vector<string>>&ans,vector<string>&board,int n){
         ans.push_back(board);
         return;
     }
+    
     int f=0;
     for(int row=0;row<n;row++){
         if(board[row][col]=='Q'){
